@@ -27,6 +27,7 @@ def get_max_joltage(sequence:str, n_cells:int):
 
         end_idx = start_idx+(avail-need)+1 # max/min of this with something else
 
+        # failed optimization attempt. correct check is probably if window size is exactly 1 because that should mean it will never grow in future iterations
         if start_idx == end_idx:
             max_digits.append(sequence[start_idx:(start_idx+n_cells-curr_cells)])
             break
