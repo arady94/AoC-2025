@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 
 def get_input(filename:str):
     with open(filename,'r') as f_in:
@@ -33,14 +34,37 @@ def count_fresh(ranges_set:set, ingredients:list):
 
 
 def run():
+    start_time = time.perf_counter()
+    
+    # Time input reading
+    t0 = time.perf_counter()
     fresh_ranges, ingredients = get_input('../data/input.txt')
+    t1 = time.perf_counter()
+    print(f"Input reading: {(t1-t0)*1000:.3f} ms")
+    
     print(fresh_ranges)
     print(ingredients)
+    
+    # Time range aggregation
+    t0 = time.perf_counter()
     fresh_set = agg_ranges(fresh_ranges)
+    t1 = time.perf_counter()
+    print(f"Range aggregation: {(t1-t0)*1000:.3f} ms")
+    
     print(fresh_set)
+    
+    # Time fresh counting
+    t0 = time.perf_counter()
     fresh_count = count_fresh(fresh_set, ingredients)
+    t1 = time.perf_counter()
+    print(f"Fresh counting: {(t1-t0)*1000:.3f} ms")
+    
     print()
     print(fresh_count)
+    
+    # Total time
+    end_time = time.perf_counter()
+    print(f"\nTotal execution time: {(end_time-start_time)*1000:.3f} ms")
 
 
 if __name__ == "__main__":

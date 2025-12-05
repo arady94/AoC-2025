@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 from itertools import combinations
 from typing import List
 from tqdm import tqdm
@@ -55,24 +56,62 @@ def trim_ranges(ranges:List[range]):
 
 
 def run():
+    start_time = time.perf_counter()
+    
+    # Time input reading
+    t0 = time.perf_counter()
     fresh_ranges, _ = get_input('../data/input.txt')
-    # print(fresh_ranges)
+    t1 = time.perf_counter()
+    print(f"Input reading: {(t1-t0)*1000:.3f} ms")
+    
+    # Time range aggregation
+    t0 = time.perf_counter()
     fresh_set = agg_ranges(fresh_ranges)
-    # print(fresh_set)
+    t1 = time.perf_counter()
+    print(f"Range aggregation: {(t1-t0)*1000:.3f} ms")
+    print(f"Initial range count: {len(fresh_set)}")
+    
+    # Time first trim
+    print("\nFirst trim pass:")
+    t0 = time.perf_counter()
     fresh_set_trim = trim_ranges(fresh_set)
+    t1 = time.perf_counter()
+    print(f"First trim: {(t1-t0)*1000:.3f} ms")
+    
     min_size = len(fresh_set_trim)
-    # print(fresh_set_trim)
+    iteration = 1
+    trim_times = []
+    
+    # Time iterative trimming
     while(True):
+        print(f"\nTrim iteration {iteration + 1}:")
+        t0 = time.perf_counter()
         fresh_set_trim = trim_ranges(fresh_set_trim)
-        # print(fresh_set_trim)
+        t1 = time.perf_counter()
+        trim_time = (t1-t0)*1000
+        trim_times.append(trim_time)
+        print(f"Trim time: {trim_time:.3f} ms")
+        
         if len(fresh_set_trim) == min_size:
+            print(f"Converged at {min_size} ranges")
             break
         else:
             print(f"Trim from {min_size} -> {len(fresh_set_trim)}")
             min_size = len(fresh_set_trim)
+        
+        iteration += 1
 
     print()
-    print(sum([len(x) for x in fresh_set_trim]))
+    print(f"Final range sum: {sum([len(x) for x in fresh_set_trim])}")
+    
+    # Summary statistics
+    end_time = time.perf_counter()
+    print(f"\n{'='*50}")
+    print(f"Total iterations: {iteration + 1}")
+    if trim_times:
+        print(f"Average trim time (after first): {sum(trim_times)/len(trim_times):.3f} ms")
+    print(f"Total execution time: {(end_time-start_time)*1000:.3f} ms ({(end_time-start_time):.3f} s)")
+    print(f"{'='*50}")
 
 
 if __name__ == "__main__":
